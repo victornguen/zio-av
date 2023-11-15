@@ -1,7 +1,8 @@
-package com.github.victornguen.av.models
+package com.github.victornguen.av.info
 
 import org.bytedeco.ffmpeg.avcodec.AVCodecParameters
 import org.bytedeco.ffmpeg.avutil.{AVDictionary, AVDictionaryEntry}
+import org.bytedeco.ffmpeg.global.avcodec.avcodec_find_encoder
 import org.bytedeco.ffmpeg.global.avutil.av_dict_iterate
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import zio.{Task, ZIO}
@@ -17,6 +18,7 @@ case class AudioInfo private (
     bitrate: Option[Int],
     framerate: Option[Double],
     lengthInFrames: Int,
+    codecInfo: CodecInfo,
     private val parameters: AVCodecParameters,
     private val avMetadata: AVDictionary,
 ) {
@@ -50,6 +52,10 @@ object AudioInfo {
     val formatContext   = grabber.getFormatContext
     val codecParameters = formatContext.streams(0).codecpar
     val metadata        = formatContext.metadata
+    val capFlags = Option(avcodec_find_encoder(codecParameters.codec_id))
+      .map(_.capabilities())
+      .getOrElse(0)
+
     AudioInfo(
       format = grabber.getFormat,
       duration = grabber.getLengthInTime,
@@ -59,6 +65,7 @@ object AudioInfo {
       bitrate = Option(grabber.getAudioBitrate),
       framerate = Option(grabber.getAudioFrameRate),
       lengthInFrames = grabber.getLengthInAudioFrames,
+      codecInfo = CodecInfo(capFlags),
       parameters = codecParameters,
       avMetadata = metadata,
     )

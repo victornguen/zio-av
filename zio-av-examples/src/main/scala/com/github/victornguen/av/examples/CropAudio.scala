@@ -1,6 +1,7 @@
 package com.github.victornguen.av.examples
 
 import com.github.victornguen.av.Audio
+import com.github.victornguen.av.settings.FFMpegLogLevel
 import com.github.victornguen.av.storage.DefaultTempFileStorage
 import zio._
 
@@ -12,6 +13,7 @@ object CropAudio extends ZIOAppDefault {
     val file          = new File(audioFilePath)
     for {
       audio     <- Audio.fromFile(file)
+      audio     <- ZIO.succeed(audio.withLogLevel(FFMpegLogLevel.Info))
       info      <- audio.getInfo
       _         <- Console.printLine(info)
       cropped   <- audio.cropStream(4d, 20d)

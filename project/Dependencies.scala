@@ -27,6 +27,7 @@ object Dependencies {
     val ffmpeg4j       = "5.1.2-1.5.8-4"
     val jave           = "3.3.1"
     val javaCv         = "1.5.9"
+    val tarsosDps      = "2.5"
   }
 
   object ZIO {
@@ -54,9 +55,11 @@ object Dependencies {
   }
 
   object AUDIO {
-    val ffmpeg4j = "com.github.manevolent" % "ffmpeg4j"      % V.ffmpeg4j
-    val jave2    = "ws.schild"             % "jave-all-deps" % V.jave
-    val javaCv   = "org.bytedeco"          % "javacv"        % V.javaCv
+    val ffmpeg4j      = "com.github.manevolent" % "ffmpeg4j"      % V.ffmpeg4j
+    val jave2         = "ws.schild"             % "jave-all-deps" % V.jave
+    val javaCv        = "org.bytedeco"          % "javacv"        % V.javaCv
+    val tarsosDspCore = "be.tarsos.dsp"         % "core"          % V.tarsosDps
+    val tarsosDspJvm  = "be.tarsos.dsp"         % "jvm"           % V.tarsosDps
   }
 
   def silencer = Seq(
@@ -101,6 +104,8 @@ object Dependencies {
     AUDIO.ffmpeg4j,
     AUDIO.jave2,
     AUDIO.javaCv,
+    AUDIO.tarsosDspCore,
+    AUDIO.tarsosDspJvm,
     ulid,
     enumeratum,
     kindProjector,

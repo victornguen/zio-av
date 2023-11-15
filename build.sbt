@@ -15,7 +15,10 @@ inThisBuild(
       Developer("vnguen", "Victor Nguen", "vnguen@beeline.ru", url("https://github.com/victornguen")),
     ),
     startYear := Some(2023),
-    resolvers += "jitpack.io" at "https://jitpack.io",
+    resolvers ++= List(
+      "jitpack.io" at "https://jitpack.io",
+      "be.0110.repo-releases" at "https://mvn.0110.be/releases",
+    ),
   ),
 )
 

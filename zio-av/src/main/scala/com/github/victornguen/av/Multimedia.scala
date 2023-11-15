@@ -1,7 +1,9 @@
 package com.github.victornguen.av
 
 import com.github.victornguen.av.Audio._
-import com.github.victornguen.av.models.{AudioInfo, FFMpegLogLevel}
+import com.github.victornguen.av.internal.VAD
+import com.github.victornguen.av.info.{AudioInfo, Interval}
+import com.github.victornguen.av.settings.{FFMpegLogLevel, PitchEstimationAlgorithm}
 import com.github.victornguen.av.storage.TempFileStorage
 import org.bytedeco.ffmpeg.global.avutil.av_log_set_level
 import org.bytedeco.javacv.{FFmpegFrameGrabber, FFmpegFrameRecorder}
@@ -142,6 +144,22 @@ final case class Audio[-R, +E <: Throwable](
 
   def withLogLevel(logLevel: FFMpegLogLevel): Audio[R, E] =
     self.copy(logLevel = logLevel)
+
+  def vadInMemory(
+      intervalsThreshold: Float = 1.05f,
+      probabilityBoarder: Float = 0.8f,
+      bufferSize: Int = 4000,
+      pitchEstimationAlgorithm: PitchEstimationAlgorithm = PitchEstimationAlgorithm.FftYin,
+  ): RIO[R with Scope, List[Interval]] =
+    VAD.vadInMemory(self, intervalsThreshold, probabilityBoarder, bufferSize, pitchEstimationAlgorithm)
+
+  def vadInFile(
+      intervalsThreshold: Float = 0.99f,
+      probabilityBoarder: Float = 0.8f,
+      bufferSize: Int = 1024,
+      pitchEstimationAlgorithm: PitchEstimationAlgorithm = PitchEstimationAlgorithm.FftPitch,
+  ): RIO[R with TempFileStorage with Scope, List[Interval]] =
+    VAD.vadInFile(self, intervalsThreshold, probabilityBoarder, bufferSize, pitchEstimationAlgorithm)
 
 }
 

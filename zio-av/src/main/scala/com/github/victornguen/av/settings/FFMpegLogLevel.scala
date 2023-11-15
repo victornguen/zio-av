@@ -1,7 +1,6 @@
-package com.github.victornguen.av.models
+package com.github.victornguen.av.settings
 
 import enumeratum._
-
 
 sealed class FFMpegLogLevel(val value: Int) extends EnumEntry
 
