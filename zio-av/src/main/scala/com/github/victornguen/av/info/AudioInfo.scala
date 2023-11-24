@@ -19,8 +19,8 @@ case class AudioInfo private (
     framerate: Option[Double],
     lengthInFrames: Int,
     codecInfo: CodecInfo,
-    private val parameters: AVCodecParameters,
-    private val avMetadata: AVDictionary,
+    private[victornguen] val parameters: AVCodecParameters,
+    private[victornguen] val avMetadata: AVDictionary,
 ) {
   lazy val bitsPerSample: Int = parameters.bits_per_coded_sample()
 

@@ -36,6 +36,13 @@ object Dependencies {
     lazy val macros  = "dev.zio" %% "zio-macros"  % V.zio
     lazy val streams = "dev.zio" %% "zio-streams" % V.zio
     lazy val zioJson = "dev.zio" %% "zio-json"    % V.zioJson
+
+    lazy val zioSchema = scalaLib("dev.zio", V.zioSchema)(
+      "zio-schema",
+      "zio-schema-protobuf",
+      "zio-schema-json",
+      "zio-schema-derivation",
+    )
   }
 
   object CATS {
@@ -62,54 +69,45 @@ object Dependencies {
     val tarsosDspJvm  = "be.tarsos.dsp"         % "jvm"           % V.tarsosDps
   }
 
-  def silencer = Seq(
-    compilerPlugin("com.github.ghik" % "silencer-plugin" % V.silencer cross CrossVersion.full),
-    "com.github.ghik" % "silencer-lib" % V.silencer % Provided cross CrossVersion.full,
-  )
+  object Utils {
+    lazy val ulid       = "com.github.f4b6a3" % "ulid-creator" % V.ulid
+    lazy val enumeratum = "com.beachape"     %% "enumeratum"   % V.enumeratum
+  }
 
-  def ulid = "com.github.f4b6a3" % "ulid-creator" % V.ulid
+  object Compiler {
+    lazy val betterMonadicFor = compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+    lazy val silencer = Lib(
+      compilerPlugin("com.github.ghik" % "silencer-plugin" % V.silencer cross CrossVersion.full),
+      "com.github.ghik" % "silencer-lib" % V.silencer % Provided cross CrossVersion.full,
+    )
+    lazy val kindProjector = compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+  }
 
-  def enumeratum = "com.beachape" %% "enumeratum" % V.enumeratum
-
-  def zioSchema = scalaLib("dev.zio", V.zioSchema)(
-    "zio-schema",
-    "zio-schema-protobuf",
-    "zio-schema-json",
-    "zio-schema-derivation",
-  )
-
-  def betterMonadicFor = compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-
-  def kindProjector = compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-
-  def all =
-    Seq(
-      zioSchema,
-      silencer,
-    ).flatten
-
-  lazy val global = all ++ Seq(
-    ZIO.core,
-    ZIO.nio,
-    ZIO.macros,
-    ZIO.streams,
-    ZIO.zioJson,
-    CATS.catsCore,
-    CATS.effect,
-    LOGS.core,
-    LOGS.zioLogging,
-    TEST.zioTest,
-    TEST.zioTestSbt,
-    TEST.scalatest,
-    AUDIO.ffmpeg4j,
-    AUDIO.jave2,
-    AUDIO.javaCv,
-    AUDIO.tarsosDspCore,
-    AUDIO.tarsosDspJvm,
-    ulid,
-    enumeratum,
-    kindProjector,
-    betterMonadicFor,
-  )
+  lazy val global: Seq[ModuleID] =
+    Lib(
+      ZIO.zioSchema,
+      Compiler.silencer,
+      ZIO.core,
+      ZIO.nio,
+      ZIO.macros,
+      ZIO.streams,
+      ZIO.zioJson,
+      CATS.catsCore,
+      CATS.effect,
+      LOGS.core,
+      LOGS.zioLogging,
+      TEST.zioTest,
+      TEST.zioTestSbt,
+      TEST.scalatest,
+      AUDIO.ffmpeg4j,
+      AUDIO.jave2,
+      AUDIO.javaCv,
+      AUDIO.tarsosDspCore,
+      AUDIO.tarsosDspJvm,
+      Utils.ulid,
+      Utils.enumeratum,
+      Compiler.kindProjector,
+      Compiler.betterMonadicFor,
+    ).modules
 
 }

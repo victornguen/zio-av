@@ -32,7 +32,7 @@ object Settings {
     "-Ywarn-extra-implicit",         // Warn when more than one implicit parameter section is defined.
     // "-Ywarn-numeric-widen",    // Warn when numerics are widened.
     "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-    "-Ywarn-unused:privates",  // Warn if a private member is unused.
+//    "-Ywarn-unused:privates",  // Warn if a private member is unused.
     "-Ybackend-parallelism",
     "8",                                         // Enable paralellisation — change to desired number!
     "-Ycache-plugin-class-loader:last-modified", // Enables caching of classloaders for compiler plugins

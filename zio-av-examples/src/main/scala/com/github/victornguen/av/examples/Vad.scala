@@ -1,7 +1,6 @@
 package com.github.victornguen.av.examples
 
 import com.github.victornguen.av.Audio
-import com.github.victornguen.av.internal.VAD
 import com.github.victornguen.av.settings.FFMpegLogLevel
 import com.github.victornguen.av.storage.DefaultTempFileStorage
 import zio._
@@ -15,8 +14,8 @@ object Vad extends ZIOAppDefault {
     for {
       audio             <- Audio.fromFile(file)
       audio             <- ZIO.succeed(audio.withLogLevel(FFMpegLogLevel.Info))
-      inMemoryVadResult <- VAD.vadInMemory(audio, intervalsThreshold = 1.1f)
-      inFileVadResult   <- VAD.vadInFile(audio)
+      inMemoryVadResult <- audio.vadInMemory(intervalsThreshold = 1.1f)
+      inFileVadResult   <- audio.vadInFile()
       _                 <- Console.printLine(inMemoryVadResult)
       _                 <- Console.printLine(inFileVadResult)
     } yield ()

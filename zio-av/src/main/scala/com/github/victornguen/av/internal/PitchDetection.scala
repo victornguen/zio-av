@@ -3,17 +3,17 @@ package com.github.victornguen.av.internal
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory
 import be.tarsos.dsp.pitch.{PitchDetectionHandler, PitchDetectionResult, PitchProcessor}
 import be.tarsos.dsp.{AudioDispatcher, AudioEvent}
-import com.github.victornguen.av.info.{AudioInfo, Interval}
+import com.github.victornguen.av.info.{AudioInfo, TimeInterval}
 import com.github.victornguen.av.settings.PitchEstimationAlgorithm
 import com.github.victornguen.av.storage.TempFileStorage
 import com.github.victornguen.av.{Audio, AudioError}
 import zio.prelude.Validation
-import zio.{IO, RIO, Scope, ZIO}
+import zio.{IO, RIO, Scope, Task, ZIO}
 
 import javax.sound.sampled.AudioFormat
 import scala.collection.mutable
 
-private[victornguen] object VAD {
+private[victornguen] object PitchDetection {
 
   def vadInMemory[R, E <: Throwable](
       audio: Audio[R, E],
@@ -21,7 +21,7 @@ private[victornguen] object VAD {
       probabilityBoarder: Float = 0.8f,
       bufferSize: Int = 4000,
       pitchEstimationAlgorithm: PitchEstimationAlgorithm = PitchEstimationAlgorithm.FftYin,
-  ): RIO[R with Scope, List[Interval]] = {
+  ): RIO[R with Scope, List[TimeInterval]] = {
     for {
       chunk       <- audio.stream.runCollect
       info        <- audio.getInfo
@@ -38,7 +38,7 @@ private[victornguen] object VAD {
       probabilityBoarder: Float = 0.8f,
       bufferSize: Int = 1024,
       pitchEstimationAlgorithm: PitchEstimationAlgorithm = PitchEstimationAlgorithm.FftPitch,
-  ): RIO[R with TempFileStorage with Scope, List[Interval]] = {
+  ): RIO[R with TempFileStorage with Scope, List[TimeInterval]] = {
     for {
       file <- audio.getFileScoped
       info <- audio.getInfo
@@ -47,47 +47,64 @@ private[victornguen] object VAD {
       result <- vad(pitchEstimationAlgorithm, info, intervalsThreshold, probabilityBoarder, dispatcher, bufferSize)
     } yield result
   }
-  private def vad[R, E <: Throwable](
+
+  /** VAD implementation.
+    * @param algorithm
+    *   see [[be.tarsos.dsp.pitch.PitchProcessor.PitchEstimationAlgorithm]]
+    * @param intervalsThreshold
+    *   time interval threshold, signals with a time difference greater than this value will be considered different phrases
+    * @param probabilityBoarder
+    *   only signals with pitch probability upper this value would be considered as a speech
+    * @param audioDispatcher
+    *   see [[be.tarsos.dsp.AudioDispatcher]]
+    * @param bufferSize
+    *   buffer size, in frames
+    * @return
+    *   list of time intervals with speech
+    */
+  private def vad[E <: Throwable](
       algorithm: PitchProcessor.PitchEstimationAlgorithm,
       audioInfo: AudioInfo,
       intervalsThreshold: Float,
       probabilityBoarder: Float,
       audioDispatcher: AudioDispatcher,
       bufferSize: Int,
-  ): ZIO[R with Scope, Throwable, List[Interval]] = {
-
+  ): Task[List[TimeInterval]] =
     for {
-      resultBuffer <- ZIO.succeed(mutable.ListBuffer.empty[Interval])
+      resultBuffer <- ZIO.succeed(mutable.ListBuffer.empty[TimeInterval])
+      pitchDetectionHandler = makePitchDetectionHandler(
+        resultBuffer,
+        _.getProbability > probabilityBoarder,
+        (_, audioEvent) => TimeInterval(audioEvent.getTimeStamp, audioEvent.getEndTimeStamp),
+      )
       pitchProcessor = new PitchProcessor(
         algorithm,
         audioInfo.sampleRate.toFloat,
         bufferSize,
-        pitchDetectionHandler(resultBuffer, probabilityBoarder),
+        pitchDetectionHandler,
       )
       _ <- ZIO.attempt(audioDispatcher.addAudioProcessor(pitchProcessor))
       _ <- ZIO.attempt(audioDispatcher.run())
       result = unionIntervals(resultBuffer.toList, intervalsThreshold)
     } yield result
-  }
 
-  private def pitchDetectionHandler(
-      putInto: mutable.ListBuffer[Interval],
-      probabilityBoarder: Float,
-  ): PitchDetectionHandler = { (pitchDetectionResult: PitchDetectionResult, audioEvent: AudioEvent) =>
-    {
-      val proba = pitchDetectionResult.getProbability
-      if (proba > probabilityBoarder) {
-        putInto += Interval(audioEvent.getTimeStamp, audioEvent.getEndTimeStamp)
+  private def makePitchDetectionHandler[T](
+      putInto: mutable.ListBuffer[T],
+      rule: PitchDetectionResult => Boolean,
+      extract: (PitchDetectionResult, AudioEvent) => T,
+  ): PitchDetectionHandler =
+    (pitchDetectionResult: PitchDetectionResult, audioEvent: AudioEvent) => {
+      if (rule(pitchDetectionResult)) {
+        putInto += extract(pitchDetectionResult, audioEvent)
       }
     }
-  }
 
-  private def unionIntervals(intervals: List[Interval], threshold: Float): List[Interval] =
+  private def unionIntervals(intervals: List[TimeInterval], threshold: Float): List[TimeInterval] =
     intervals
-      .foldLeft(List.empty[Interval]) {
+      .foldLeft(List.empty[TimeInterval]) {
         case (Nil, el) => List(el)
-        case ((last @ Interval(lastStart, lastEnd)) :: rest, el @ Interval(newStart, newEnd)) =>
-          if (newStart - lastEnd < threshold) Interval(lastStart, newEnd) :: rest
+        case ((last @ TimeInterval(lastStart, lastEnd)) :: rest, el @ TimeInterval(newStart, newEnd)) =>
+          if (newStart - lastEnd < threshold) TimeInterval(lastStart, newEnd) :: rest
           else el :: last :: rest
       }
       .reverse
