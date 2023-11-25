@@ -3,10 +3,10 @@ package com.github.victornguen.av
 import com.github.victornguen.av.Audio._
 import com.github.victornguen.av.info.{AudioInfo, TimeInterval}
 import com.github.victornguen.av.internal.PitchDetection
+import com.github.victornguen.av.logging.AVLogging
 import com.github.victornguen.av.settings.AudioCodec.CodecId
-import com.github.victornguen.av.settings.{AudioCodec, AudioFormat, FFMpegLogLevel, PitchEstimationAlgorithm}
+import com.github.victornguen.av.settings.{AudioCodec, AudioFormat, PitchEstimationAlgorithm}
 import com.github.victornguen.av.storage.TempFileStorage
-import org.bytedeco.ffmpeg.global.avutil.av_log_set_level
 import org.bytedeco.javacv.{FFmpegFrameGrabber, FFmpegFrameRecorder, Frame}
 import zio.nio.file.{Files, Path}
 import zio.stream.{ZSink, ZStream}
@@ -17,11 +17,12 @@ import scala.jdk.CollectionConverters.MapHasAsJava
 
 trait Multimedia[-R, +E]
 
+object Multimedia extends AVLogging
+
 final case class Audio[-R, +E <: Throwable](
     stream: ZStream[R, E, Byte],
     private val filePromise: Promise[Nothing, Path],
     private val infoPromise: Promise[Nothing, AudioInfo],
-    logLevel: FFMpegLogLevel = FFMpegLogLevel.Quiet,
 ) extends Multimedia[R, E] { self =>
 
   def getFile: RIO[R with TempFileStorage, Path] = {
@@ -218,12 +219,9 @@ final case class Audio[-R, +E <: Throwable](
   }
 
   private def frameGrabber: ZIO[R with Scope, E, FFmpegFrameGrabber] =
-    ZIO.acquireRelease {
-      for {
-        is <- stream.toInputStream
-        _  <- ZIO.succeed(av_log_set_level(logLevel))
-      } yield new FFmpegFrameGrabber(is)
-    } { grabber =>
+    ZIO.acquireRelease(
+      stream.toInputStream.map(new FFmpegFrameGrabber(_)),
+    ) { grabber =>
       ZIO.attempt {
         grabber.stop()
         grabber.release()
@@ -238,21 +236,13 @@ final case class Audio[-R, +E <: Throwable](
 
   private def useFrameRecorder(recorder: FFmpegFrameRecorder): URIO[Scope, FFmpegFrameRecorder] =
     ZIO.acquireRelease {
-      ZIO.succeed {
-        av_log_set_level(logLevel)
-        recorder
-      }
+      ZIO.succeed(recorder)
     } { recorder =>
       ZIO.attempt {
         recorder.stop()
         recorder.release()
       }.orDie
     }
-
-  /** Set log level for ffmpeg
-    */
-  def withLogLevel(logLevel: FFMpegLogLevel): Audio[R, E] =
-    self.copy(logLevel = logLevel)
 
   /** Recognize speech intervals in audio. Processing without creating temp file.
     * @param intervalsThreshold
