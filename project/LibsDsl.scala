@@ -16,4 +16,14 @@ object LibsDsl {
     val createModule: String => ModuleID = n %% _ % v excludeAll (scalaLibraryExclusion: _*)
     LibSet(createModule andThen modifyModule)
   }
+
+  def javaLib(
+      n: String,
+      v: String,
+      modifyModule: ModuleID => ModuleID = identity,
+  ) = {
+    val createModule: String => ModuleID = n % _ % v
+    LibSet(createModule andThen modifyModule)
+  }
+
 }

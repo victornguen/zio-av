@@ -6,7 +6,7 @@ addSbtPlugin("org.bytedeco"  % "sbt-javacpp"   % "1.17")
 // workaround for scala-xml dependency conflict
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
-val ZioSbtVersion = "0.4.0-alpha.12"
+val ZioSbtVersion = "0.4.0-alpha.22"
 
 addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"  % "3.0.2")
 addSbtPlugin("dev.zio"                           % "zio-sbt-ci"        % ZioSbtVersion)

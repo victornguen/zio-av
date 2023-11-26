@@ -11,6 +11,7 @@ inThisBuild(
   List(
     name               := projName,
     crossScalaVersions := Seq(scala213.value),
+    ciEnabledBranches        := Seq("master"),
     developers := List(
       Developer("vnguen", "Victor Nguen", "vnguen@beeline.ru", url("https://github.com/victornguen")),
     ),
@@ -40,6 +41,7 @@ lazy val av = {
     .settings(
       Compile / scalacOptions ++= Settings.compilerOptions,
       javaCppPresetLibs ++= Seq("ffmpeg" -> "4.3.1"),
+      fork := true,
     )
     .settings(libraryDependencies ++= Dependencies.global)
 }
@@ -52,3 +54,6 @@ lazy val examples =
     .settings(publish / skip := true)
     .settings(libraryDependencies ++= Dependencies.global)
     .dependsOn(av)
+
+addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
+addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
