@@ -61,3 +61,18 @@ lazy val examples =
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("checkFmt", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
+
+lazy val docs = project
+  .in(file("zio-av-docs"))
+  .settings(
+    moduleName := "zio-av-docs",
+    scalacOptions -= "-Yno-imports",
+    scalacOptions -= "-Xfatal-warnings",
+    projectName                                := "ZIO AV",
+    mainModuleName                             := (zioAv / moduleName).value,
+    projectStage                               := ProjectStage.Development,
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioAv),
+    headerLicense                              := None,
+  )
+  .enablePlugins(WebsitePlugin)
+  .dependsOn(zioAv)
