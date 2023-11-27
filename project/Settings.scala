@@ -12,7 +12,6 @@ object Settings {
     "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
     "-Xcheckinit",                   // Wrap field accessors to throw an exception on uninitialized access.
     "-Xfatal-warnings",              // Fail the compilation if there are any warnings.
-    "-Ymacro-annotations",
     "-Xlint:_,-byname-implicit",
     "-Xlint:adapted-args",           // Warn if an argument list is modified to match the receiver.
     "-Xlint:constant",               // Evaluation of a constant arithmetic expression results in an error.
@@ -34,7 +33,7 @@ object Settings {
     "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
 //    "-Ywarn-unused:privates",  // Warn if a private member is unused.
     "-Ybackend-parallelism",
-    "8",                                         // Enable paralellisation — change to desired number!
+    "8",                                         // Enable paralellisation
     "-Ycache-plugin-class-loader:last-modified", // Enables caching of classloaders for compiler plugins
     "-Ycache-macro-class-loader:last-modified",  // and macro definitions. This can lead to performance improvements.
   )

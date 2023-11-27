@@ -19,7 +19,6 @@ object Dependencies {
   object ZIO {
     lazy val core    = "dev.zio" %% "zio"         % V.zio
     lazy val nio     = "dev.zio" %% "zio-nio"     % V.zioNio
-    lazy val macros  = "dev.zio" %% "zio-macros"  % V.zio
     lazy val streams = "dev.zio" %% "zio-streams" % V.zio
     lazy val logging = "dev.zio" %% "zio-logging" % V.zioLogging
     lazy val prelude = "dev.zio" %% "zio-prelude" % V.prelude
@@ -41,14 +40,12 @@ object Dependencies {
 
   object Compiler {
     lazy val betterMonadicFor = compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-    lazy val kindProjector    = compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   }
 
-  lazy val global: Seq[ModuleID] =
+  def global(scalaVersion: String): Seq[ModuleID] =
     Lib(
       ZIO.core,
       ZIO.nio,
-      ZIO.macros,
       ZIO.streams,
       ZIO.logging,
       ZIO.prelude,
@@ -57,8 +54,10 @@ object Dependencies {
       AUDIO.javaCv,
       AUDIO.tarsosDsp,
       Utils.enumeratum,
-      Compiler.kindProjector,
-      Compiler.betterMonadicFor,
+      CrossVersion.partialVersion(scalaVersion) match {
+        case Some((2, _)) => Seq(Compiler.betterMonadicFor)
+        case _            => List.empty
+      },
     ).modules
 
 }

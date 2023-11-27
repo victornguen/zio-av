@@ -9,7 +9,7 @@ enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 inThisBuild(
   List(
     name               := projName,
-    crossScalaVersions := Seq(scala212.value, scala213.value, scala3.value),
+    crossScalaVersions := Seq(scala213.value, scala3.value),
     ciEnabledBranches  := Seq("master"),
     developers := List(
       Developer("vnguen", "Victor Nguen", "vnguen@beeline.ru", url("https://github.com/victornguen")),
@@ -43,11 +43,10 @@ lazy val zioAv = {
     .settings(BuildHelper.stdSetting("zio-av", "av"))
     .settings()
     .settings(
-      Compile / scalacOptions ++= Settings.compilerOptions,
       javaCppPresetLibs ++= Seq("ffmpeg" -> "4.3.1"),
       fork := true,
     )
-    .settings(libraryDependencies ++= Dependencies.global)
+    .settings(libraryDependencies ++= Dependencies.global(scalaVersion.value))
 }
 
 lazy val examples =
@@ -56,9 +55,9 @@ lazy val examples =
     .settings(enableZIO(enableStreaming = true))
     .settings(BuildHelper.stdSetting("zio-av-examples", "av.examples"))
     .settings(publish / skip := true)
-    .settings(libraryDependencies ++= Dependencies.global)
+    .settings(libraryDependencies ++= Dependencies.global(scalaVersion.value))
     .disablePlugins(ScalafixPlugin)
     .dependsOn(zioAv)
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
-addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
+addCommandAlias("checkFmt", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")

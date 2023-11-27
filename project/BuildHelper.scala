@@ -3,7 +3,7 @@ import sbt.*
 import sbt.Keys.*
 import sbtbuildinfo.BuildInfoKeys.*
 import scalafix.sbt.ScalafixPlugin.autoImport.*
-import zio.sbt.Versions.scala213
+import zio.sbt.ZioSbtEcosystemPlugin.autoImport.optionsOn
 
 object BuildHelper {
 
@@ -48,7 +48,7 @@ object BuildHelper {
           Compile / scalafmtSbtCheck,
         )
         .value,
-      Compile / scalacOptions ++= Settings.compilerOptions,
-      crossScalaVersions := Seq(scala213),
+      scalacOptions ++=
+        optionsOn("2.13")(Settings.compilerOptions *).value,
     )
 }
