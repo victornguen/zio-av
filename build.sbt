@@ -1,17 +1,16 @@
 val projVersion = "0.0.1"
 val projName    = "Triton Client"
 
-ThisBuild / scalaVersion := "2.13.11"
-ThisBuild / version      := "0.0.1"
-ThisBuild / organization := "com.github.victornguen"
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / organization := "io.github.victornguen"
 
-enablePlugins(ZioSbtEcosystemPlugin)
+enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
 inThisBuild(
   List(
     name               := projName,
-    crossScalaVersions := Seq(scala213.value),
-    ciEnabledBranches        := Seq("master"),
+    crossScalaVersions := Seq(scala212.value, scala213.value, scala3.value),
+    ciEnabledBranches  := Seq("master"),
     developers := List(
       Developer("vnguen", "Victor Nguen", "vnguen@beeline.ru", url("https://github.com/victornguen")),
     ),
@@ -20,6 +19,10 @@ inThisBuild(
       "jitpack.io" at "https://jitpack.io",
       "be.0110.repo-releases" at "https://mvn.0110.be/releases",
     ),
+    semanticdbEnabled      := true,
+    semanticdbVersion      := scalafixSemanticdb.revision,
+    sonatypeCredentialHost := "s01.oss.sonatype.org",
+    sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   ),
 )
 
@@ -31,13 +34,14 @@ lazy val root: Project =
       crossScalaVersions := Nil,
       Compile / console / scalacOptions --= Seq("-Xlint"),
     )
-    .aggregate(av)
+    .aggregate(zioAv, examples)
 
-lazy val av = {
+lazy val zioAv = {
   project
     .in(file("zio-av"))
     .settings(enableZIO(enableStreaming = true))
     .settings(BuildHelper.stdSetting("zio-av", "av"))
+    .settings()
     .settings(
       Compile / scalacOptions ++= Settings.compilerOptions,
       javaCppPresetLibs ++= Seq("ffmpeg" -> "4.3.1"),
@@ -53,7 +57,8 @@ lazy val examples =
     .settings(BuildHelper.stdSetting("zio-av-examples", "av.examples"))
     .settings(publish / skip := true)
     .settings(libraryDependencies ++= Dependencies.global)
-    .dependsOn(av)
+    .disablePlugins(ScalafixPlugin)
+    .dependsOn(zioAv)
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")

@@ -12,7 +12,7 @@ object TranscodingExample extends ZIOAppDefault {
     val audioFilePath = "zio-av-examples\\src\\main\\resources\\Shooting Stars.mp3"
     val file          = new File(audioFilePath)
     for {
-      _ <- Multimedia.setLogLevel(AVLogLevel.Info)
+      _            <- Multimedia.setLogLevel(AVLogLevel.Info)
       _            <- Multimedia.logToFile(new File("./log.log"))
       audio        <- Audio.fromFile(file)
       newAudio     <- audio.transcode(AudioCodec.PCM.S16LE, AudioFormat.WAV, Some(8000))

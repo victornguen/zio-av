@@ -11,10 +11,9 @@ object Dependencies {
     val zioNio     = "2.0.2"
     val zioLogging = "2.1.13"
     val prelude    = "1.0.0-RC21"
-    val silencer   = "1.7.13"
     val enumeratum = "1.7.2"
-    val javaCv    = "1.5.9"
-    val tarsosDps = "2.5"
+    val javaCv     = "1.5.9"
+    val tarsosDps  = "2.5"
   }
 
   object ZIO {
@@ -42,16 +41,11 @@ object Dependencies {
 
   object Compiler {
     lazy val betterMonadicFor = compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-    lazy val silencer = Lib(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % V.silencer cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % V.silencer % Provided cross CrossVersion.full,
-    )
-    lazy val kindProjector = compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+    lazy val kindProjector    = compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   }
 
   lazy val global: Seq[ModuleID] =
     Lib(
-      Compiler.silencer,
       ZIO.core,
       ZIO.nio,
       ZIO.macros,
