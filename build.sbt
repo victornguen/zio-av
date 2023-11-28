@@ -1,6 +1,3 @@
-val projVersion = "0.0.1"
-val projName    = "Triton Client"
-
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / organization := "io.github.victornguen"
 
@@ -8,7 +5,7 @@ enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
 inThisBuild(
   List(
-    name               := projName,
+    name               := "ZIO AV",
     crossScalaVersions := Seq(scala213.value, scala3.value),
     ciEnabledBranches  := Seq("master"),
     developers := List(
