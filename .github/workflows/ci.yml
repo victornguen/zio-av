@@ -138,7 +138,7 @@ jobs:
             - After any changes to the "docs/index.md" file, I will update the README.md file accordingly.
         branch: zio-sbt-website/update-readme
         commit-message: Update README.md
-        token: ${{ steps.generate-token.outputs.token }}
+        token: ${{ secrets.PR_FGT }}
         delete-branch: true
         title: Update README.md
     - name: Approve PR
