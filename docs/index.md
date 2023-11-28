@@ -1,11 +1,18 @@
-# ZIO AV
+---
+id: index 
+title: "Getting Started with ZIO AV"
+sidebar_label: "Getting Started"
+---
 
-zio-av is a library for audio (video coming soon) processing with ZIO, built on top of
+
+[ZIO AV](https://github.com/victornguen/zio-av) is a library for audio (video coming soon) processing with ZIO, built on top of
 the [FFmpeg libraries](https://github.com/FFmpeg/FFmpeg)
 using [JavaCPP](https://github.com/bytedeco/javacpp) and [JavaCV](https://github.com/bytedeco/javacv/).
 It provides a simple way to work with audio data, enabling you to perform various operations such
 as transcoding (encode audio with different codec, sample rate, bitrate), getting audio metadata, cropping audio and
 etc.
+
+@PROJECT_BADGES@
 
 ## Features
 
@@ -23,7 +30,7 @@ etc.
 Add the following dependency to your `build.sbt` file:
 
 ```sbt
-libraryDependencies += "io.github.victornguen" %% "zio-av" % version
+libraryDependencies += "io.github.victornguen" %% "zio-av" % "@VERSION@"
 ```
 
 Since library uses TarsosDSP, you need to add following resolver:
@@ -64,7 +71,6 @@ object TranscodingExample extends ZIOAppDefault {
       Scope.default,
     )
 
-}
 }
 ```
 
