@@ -11,7 +11,7 @@ It provides a simple way to work with audio data, enabling you to perform variou
 as transcoding (encode audio with different codec, sample rate, bitrate), getting audio metadata, cropping audio and
 etc.
 
-[![Development](https://img.shields.io/badge/Project%20Stage-Development-green.svg)](https://github.com/zio/zio/wiki/Project-Stages) ![CI Badge](https://github.com/zio/zio-av/workflows/CI/badge.svg) [![Sonatype Snapshots](https://img.shields.io/nexus/s/https/oss.sonatype.org/io.github.victornguen/zio-av_2.13.svg?label=Sonatype%20Snapshot)](https://oss.sonatype.org/content/repositories/snapshots/io/github/victornguen/zio-av_2.13/) [![ZIO AV](https://img.shields.io/github/stars/zio/zio-av?style=social)](https://github.com/zio/zio-av)
+[![Development](https://img.shields.io/badge/Project%20Stage-Development-green.svg)](https://github.com/zio/zio/wiki/Project-Stages) [![Sonatype Snapshots](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/io.github.victornguen/zio-av_2.13.svg?label=Sonatype%20Snapshot)](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/victornguen/zio-av_2.13/) [![ZIO AV](https://img.shields.io/github/stars/victornguen/zio-av?style=social)](https://github.com/victornguen/zio-av)
 
 ## Features
 
@@ -84,26 +84,3 @@ appreciated.
 ## License
 
 This project is licensed under the [Apache 2.0 License](../LICENSE).
-
-## Documentation
-
-Learn more on the [ZIO AV homepage](https://zio.dev/zio-av)!
-
-## Contributing
-
-For the general guidelines, see ZIO [contributor's guide](https://zio.dev/contributor-guidelines).
-
-## Code of Conduct
-
-See the [Code of Conduct](https://zio.dev/code-of-conduct)
-
-## Support
-
-Come chat with us on [![Badge-Discord]][Link-Discord].
-
-[Badge-Discord]: https://img.shields.io/discord/629491597070827530?logo=discord "chat on discord"
-[Link-Discord]: https://discord.gg/2ccFBr4 "Discord"
-
-## License
-
-[License](LICENSE)

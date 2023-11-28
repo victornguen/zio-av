@@ -70,6 +70,7 @@ lazy val docs = project
     projectStage                               := ProjectStage.Development,
     ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioAv),
     headerLicense                              := None,
+    sonatypeCredentialHost                     := "s01.oss.sonatype.org",
   )
   .enablePlugins(WebsitePlugin)
   .dependsOn(zioAv)
