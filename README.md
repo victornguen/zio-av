@@ -8,7 +8,7 @@
 
 ## Documentation
 
-Learn more on the [ZIO AV homepage](https://zio.dev/triton-client)!
+Learn more on the [ZIO AV homepage](https://zio.dev/zio-av)!
 
 ## Contributing
 
