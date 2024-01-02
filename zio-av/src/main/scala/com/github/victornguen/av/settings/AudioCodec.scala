@@ -11,7 +11,7 @@ object AudioCodec extends Enum[AudioCodec] {
 
   override def values: IndexedSeq[AudioCodec] = findValues
 
-  implicit def codecToString(codec: AudioCodec): CodecId = codec.codecId
+  implicit def codecToCodecId(codec: AudioCodec): CodecId = codec.codecId
 
   object PCM {
     case object S16LE        extends AudioCodec(avcodec.AV_CODEC_ID_PCM_S16LE)

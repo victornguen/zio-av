@@ -3,12 +3,12 @@ package com.github.victornguen.av
 import com.github.victornguen.av.info.InfoRetriever
 import com.github.victornguen.av.logging.AVLogging
 import com.github.victornguen.av.storage.TempFileStorage
-import org.bytedeco.javacv.FFmpegFrameGrabber
+import org.bytedeco.javacv.{FFmpegFrameGrabber, FFmpegFrameRecorder}
 import zio.nio.file.{Files, Path}
 import zio.stream.{ZSink, ZStream}
-import zio.{Promise, RIO, Scope, UIO, ZIO}
+import zio.{Promise, RIO, Scope, UIO, URIO, ZIO}
 
-import java.io.File
+import java.io.{File, OutputStream}
 
 abstract class Multimedia[-R, +E <: Throwable, I: InfoRetriever](
     stream: ZStream[R, E, Byte],
@@ -64,6 +64,22 @@ abstract class Multimedia[-R, +E <: Throwable, I: InfoRetriever](
       ZIO.attempt {
         grabber.stop()
         grabber.release()
+      }.orDie
+    }
+
+  protected def bufferFrameRecorder(channels: Int, buffer: OutputStream): URIO[Scope, FFmpegFrameRecorder] =
+    useFrameRecorder(new FFmpegFrameRecorder(buffer, channels))
+
+  protected def fileFrameRecorder(channel: Int, file: File): URIO[Scope, FFmpegFrameRecorder] =
+    useFrameRecorder(new FFmpegFrameRecorder(file, channel))
+
+  protected def useFrameRecorder(recorder: FFmpegFrameRecorder): URIO[Scope, FFmpegFrameRecorder] =
+    ZIO.acquireRelease {
+      ZIO.succeed(recorder)
+    } { recorder =>
+      ZIO.attempt {
+        recorder.stop()
+        recorder.release()
       }.orDie
     }
 

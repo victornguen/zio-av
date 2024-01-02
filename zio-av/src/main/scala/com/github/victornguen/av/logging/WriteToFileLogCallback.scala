@@ -5,7 +5,7 @@ import zio.{IO, ZIO}
 
 import java.io.{File, FileWriter, IOException}
 
-final case class WriteToFileLogCallBack(file: File) extends AVLogCallbackDefault[IOException] {
+final case class WriteToFileLogCallback(file: File) extends AVLogCallbackDefault[IOException] {
 
   private val writer = new FileWriter(file)
 

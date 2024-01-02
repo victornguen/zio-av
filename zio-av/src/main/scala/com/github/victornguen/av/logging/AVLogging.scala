@@ -14,7 +14,7 @@ trait AVLogging {
   def logToFile(file: File): URIO[Scope, Unit] =
     for {
       scope <- ZIO.scope
-      cb = WriteToFileLogCallBack(file)
+      cb = WriteToFileLogCallback(file)
       _ <- ZIO.succeedBlocking(avutil.setLogCallback(cb))
       _ <- scope.addFinalizer(cb.closeWriter.orDie)
     } yield ()

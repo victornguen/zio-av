@@ -7,7 +7,7 @@ object Dependencies {
 
   object V {
     val scala      = "2.13.11"
-    val zio        = "2.0.16"
+    val zio        = "2.0.20"
     val zioNio     = "2.0.2"
     val zioLogging = "2.1.13"
     val prelude    = "1.0.0-RC21"
@@ -30,7 +30,7 @@ object Dependencies {
   }
 
   object AUDIO {
-    val javaCv    = "org.bytedeco" % "javacv" % V.javaCv
+    val javaCv    = "org.bytedeco" % "javacv-platform" % V.javaCv
     val tarsosDsp = javaLib("be.tarsos.dsp", V.tarsosDps)("core", "jvm")
   }
 

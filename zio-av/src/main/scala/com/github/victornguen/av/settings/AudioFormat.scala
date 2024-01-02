@@ -2,7 +2,9 @@ package com.github.victornguen.av.settings
 
 import enumeratum._
 
-sealed class AudioFormat extends EnumEntry
+sealed class AudioFormat extends EnumEntry { self =>
+  def name: String = self.entryName.toLowerCase
+}
 
 object AudioFormat extends Enum[AudioFormat] {
 
@@ -30,6 +32,6 @@ object AudioFormat extends Enum[AudioFormat] {
   case object WavPack extends AudioFormat
   case object LDCT    extends AudioFormat
 
-  implicit def toString(audioFormat: AudioFormat): String = audioFormat.entryName
+  implicit def toString(audioFormat: AudioFormat): String = audioFormat.entryName.toLowerCase
 
 }
