@@ -68,7 +68,7 @@ object TranscodingExample extends ZIOAppDefault {
 }
 ```
 
-More examples available in [zio-av-examples](../zio-av-examples).
+More examples available in [zio-av-examples](./zio-av-examples).
 
 ## Contributing
 
