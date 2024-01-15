@@ -16,6 +16,12 @@ inThisBuild(
       "jitpack.io" at "https://jitpack.io",
       "be.0110.repo-releases" at "https://mvn.0110.be/releases",
     ),
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/victornguen/zio-av"),
+        "https://github.com/victornguen/zio-av.git",
+      ),
+    ),
     semanticdbEnabled      := true,
     semanticdbVersion      := scalafixSemanticdb.revision,
     sonatypeCredentialHost := "s01.oss.sonatype.org",
